@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 extern void utilAssert(int e, const char* file, int line);
-
+//fdfsdfdfdf
 #define ASSERT(e) utilAssert(!!(e), __FILE__, __LINE__)
 
 MainWindow::MainWindow(QWidget *parent)
