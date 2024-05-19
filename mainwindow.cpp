@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 extern void utilAssert(int e, const char* file, int line);
-//fdfsdfdfdf
+
 #define ASSERT(e) utilAssert(!!(e), __FILE__, __LINE__)
 
 MainWindow::MainWindow(QWidget *parent)
@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label->setStyleSheet("image: url(:/img/CryptoEtalon.png);");
     ui->textBrowser_3->setVisible(false);
     ui->lineEdit->setVisible(false);
+    ui->pushButton->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -193,8 +194,8 @@ bool_t memIsDisjoint(const void* buf1, const void* buf2, size_t count)
 void memCopy(void* dest, const void* src, size_t count)
 {
     ASSERT(memIsDisjoint(src, dest, count));
-    if (count)
-        memcpy(dest, src, count);
+    if (count){
+        memcpy(dest, src, count);}
 }
 
 static void brngCTRXStart(const octet key[32], const octet iv[32],
@@ -351,7 +352,7 @@ bign_params params ()
 
 
 
-void key_gen (const bign_params* paramets, octet privkey[64], octet pubkey[128])
+int key_gen (const bign_params* paramets, octet privkey[32], octet pubkey[64], octet brng_state[1024])
 {
     QString pwd = "E:\\Bee2\\bee2-master\\win\\vs15\\distrib\\Debug64\\bee2.dll";
 
@@ -375,49 +376,47 @@ void key_gen (const bign_params* paramets, octet privkey[64], octet pubkey[128])
     }
 
     typedef err_t (*bignKeypairGenType)(
-        octet privkey[],			/*!< [out] личный ключ */
-        octet pubkey[],				/*!< [out] открытый ключ */
-        const bign_params* params,	/*!< [in] долговременные параметры */
-        gen_i rng,				/*!< [in] генератор случайных чисел */
-        void* rng_state				/*!< [in,out] состояние генератора */
+        octet privkey[],   /*!< [out] личный ключ */
+        octet pubkey[],    /*!< [out] открытый ключ */
+        const bign_params* params, /*!< [in] долговременные параметры */
+        gen_i rng,    /*!< [in] генератор случайных чисел */
+        void* rng_state    /*!< [in,out] состояние генератора */
         );
 
     typedef void (*brngCTRStepRType)(
-        void* buf,			/*!< [in,out] дополн. / псевдослучайные данные */
-        size_t count,		/*!< [in] число октетов buf */
-        void* state			/*!< [in,out] состояние */
+        void* buf,   /*!< [in,out] дополн. / псевдослучайные данные */
+        size_t count,  /*!< [in] число октетов buf */
+        void* state   /*!< [in,out] состояние */
         );
 
     typedef err_t (*bignKeypairValType)(
-        const bign_params* params,	/*!< [in] долговременные параметры */
-        const octet privkey[],		/*!< [in] личный ключ */
-        const octet pubkey[]		/*!< [in] открытый ключ */
+        const bign_params* params, /*!< [in] долговременные параметры */
+        const octet privkey[],  /*!< [in] личный ключ */
+        const octet pubkey[]  /*!< [in] открытый ключ */
         );
 
     typedef const octet* (*beltHType)();
 
     brngCTRStepRType brngCTRStepR = reinterpret_cast<brngCTRStepRType>(lib.resolve("brngCTRStepR"));
-    qDebug()<<"brngCTRStepR.resolve="<<lib.resolve("brngCTRStepR");
+    //qDebug()<<"brngCTRStepR.resolve="<<lib.resolve("brngCTRStepR");
 
     bignKeypairGenType bignKeypairGen = reinterpret_cast<bignKeypairGenType>(lib.resolve("bignKeypairGen"));
-    qDebug()<<"bignKeypairGen.resolve=" <<lib.resolve("bignKeypairGen");
+    //qDebug()<<"bignKeypairGen.resolve=" <<lib.resolve("bignKeypairGen");
 
     beltHType beltH = reinterpret_cast<beltHType>(lib.resolve("beltH"));
-    qDebug()<<"beltH.resolve=" <<lib.resolve("beltH");
+    //qDebug()<<"beltH.resolve=" <<lib.resolve("beltH");
 
     bignKeypairValType bignKeypairVal = reinterpret_cast<bignKeypairValType>(lib.resolve("bignKeypairVal"));
-    qDebug()<<"bignKeypairVal.resolve=" <<lib.resolve("bignKeypairVal");
+    //qDebug()<<"bignKeypairVal.resolve=" <<lib.resolve("bignKeypairVal");
 
-    octet brng_state[1024];
+    //qDebug()<<"state before start  " << brng_state;
 
-    qDebug()<<"state before start  " << brng_state;
+    // brngCTRXStart(beltH() + 128, beltH() + 128 + 64, beltH(), 8 * 32, brng_state);
 
-    brngCTRXStart(beltH() + 128, beltH() + 128 + 64, beltH(), 8 * 32, brng_state);
+    // qDebug() <<"До функции:"<< QByteArray::fromRawData((const char *)privkey, 32).toHex();
+    // qDebug() << QByteArray::fromRawData((const char *)pubkey, 32).toHex();    brngCTRXStart(beltH() + 128, beltH() + 128 + 64, beltH(), 8 * 32, brng_state);
 
-    //qDebug() <<"До функции:"<< QByteArray::fromRawData((const char *)privkey, 32).toHex();
-    //qDebug() << QByteArray::fromRawData((const char *)pubkey, 32).toHex();
-
-    qDebug()<<"state before step   " << brng_state;
+    //qDebug()<<"state before step   " << brng_state;
 
     err_t v = bignKeypairGen (privkey, pubkey, paramets,  brngCTRXStepR, brng_state);
 
@@ -425,13 +424,13 @@ void key_gen (const bign_params* paramets, octet privkey[64], octet pubkey[128])
     {
         qDebug()<<"key pair gen OK";
     }
-    else
+    else{
         qDebug()<<"v="<<v;
+    }
+    //qDebug()<<"state = " << brng_state;
 
-    qDebug()<<"state = " << brng_state;
-
-    qDebug() <<"после функции:"<< QByteArray::fromRawData((const char *)privkey, 32).toHex();
-    qDebug() << QByteArray::fromRawData((const char *)pubkey, 32).toHex();
+    //qDebug() <<"после функции:"<< QByteArray::fromRawData((const char *)privkey, 32).toHex();
+    //qDebug() << QByteArray::fromRawData((const char *)pubkey, 64).toHex();
 
     err_t t = bignKeypairVal(paramets,privkey,pubkey);
 
@@ -439,8 +438,9 @@ void key_gen (const bign_params* paramets, octet privkey[64], octet pubkey[128])
     {
         qDebug()<<"key pair is valid";
     }
-    else
+    else{
         qDebug()<<"t="<<t;
+    }
 }
 
 
@@ -481,7 +481,7 @@ QString Sign (octet sig[], const bign_params* paramets)
 
     bignSignType bignSign = reinterpret_cast<bignSignType>(lib.resolve("bignSign"));
 
-    qDebug() << "bignSign.resolve="<<lib.resolve("bignSign");
+    //qDebug() << "bignSign.resolve="<<lib.resolve("bignSign");
 
     typedef err_t (*bignOidToDERType)(
         octet der[],  /*!< [out] DER-код идентификатора */
@@ -491,7 +491,7 @@ QString Sign (octet sig[], const bign_params* paramets)
 
     bignOidToDERType bignOidToDER = reinterpret_cast<bignOidToDERType>(lib.resolve("bignOidToDER"));
 
-    qDebug() << "bignOidToDER.resolve="<<lib.resolve("bignOidToDER");
+    //qDebug() << "bignOidToDER.resolve="<<lib.resolve("bignOidToDER");
     octet der[16];
     size_t* count;
     size_t count1 = 32;
@@ -502,11 +502,11 @@ QString Sign (octet sig[], const bign_params* paramets)
     err_t v = bignOidToDER (der, count, oid);
     if (v==ERR_OK)
     {
-        qDebug()<<"key pair gen OK";
+        //qDebug()<<"key pair gen OK";
     }
-    else
-        qDebug()<<"v="<<v;
-
+    else{
+        //qDebug()<<"v="<<v;
+    }
     octet brng_state[1024];
 
 
@@ -515,7 +515,7 @@ QString Sign (octet sig[], const bign_params* paramets)
     octet privkey[32];
     octet pubkey[64];
 
-    key_gen(paramets, privkey, pubkey);
+    //key_gen(paramets, privkey, pubkey,brng_state);
 
 
     QString str;
@@ -772,6 +772,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
     ui->comboBox->setVisible(false);
     ui->textBrowser_3->setVisible(false);
     ui->lineEdit->setVisible(false);
+    ui->pushButton->setVisible(false);
     if (item->text(0)=="Хеширование (beltHash)"){
         ui->radioButton_9->setVisible(true);
         ui->radioButton_10->setVisible(true);
@@ -789,13 +790,18 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
     if (item->text(0)=="Выработка и проверка ЭЦП"){
         octet sig[32];
         const bign_params* paramets;
-        QString i= Sign(sig, paramets);
+        bign_params parametrs= params();
+        paramets=&parametrs;
+   QString i= Sign(sig, paramets);
         ui->textBrowser_3->setVisible(true);
         ui->textBrowser_3->setText(i);;
 
         ui->statusbar->showMessage(i);
     }
+    if (item->text(0)=="Построение ключа" ){
 
+        ui->pushButton->setVisible(true);
+    }
 
 }
 
@@ -805,7 +811,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 
 void MainWindow::on_comboBox_activated(int index)
 {
-    if (index == 0){
+    /*if (index == 0){
         QString i= hashing1("", 128,127,32);
         ui->textBrowser_3->setVisible(true);
         ui->textBrowser_3->setText(i);
@@ -821,7 +827,7 @@ void MainWindow::on_comboBox_activated(int index)
         ui->textBrowser_3->setVisible(true);
         ui->textBrowser_3->setText(i);
 
-    }
+    }*/
 
 }
 
@@ -833,4 +839,23 @@ void MainWindow::on_lineEdit_textEdited(const QString &arg1)
 
 
 
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    octet brng_state[1024];
+
+    const bign_params* paramets;
+    bign_params parametrs= params();
+    paramets=&parametrs;
+    octet privkey[32];
+    octet pubkey[64];
+    //qDebug() <<"ДОООООО функции:"<< QByteArray::fromRawData((const char *)privkey, 32).toHex();
+    //qDebug() << QByteArray::fromRawData((const char *)pubkey, 64).toHex();
+    key_gen(paramets, privkey, pubkey,brng_state);
+    qDebug() <<"после функции:"<< QByteArray::fromRawData((const char *)privkey, 32).toHex();
+    qDebug() << QByteArray::fromRawData((const char *)pubkey, 64).toHex();
+    //int a =ui->lineEdit->text()::toInt(0,10);
+    //ui.lineEdit_3->setText(QString::number(x));
+}
 

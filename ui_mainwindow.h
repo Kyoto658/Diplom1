@@ -19,6 +19,7 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextBrowser>
@@ -47,6 +48,7 @@ public:
     QRadioButton *radioButton_10;
     QRadioButton *radioButton_9;
     QRadioButton *radioButton_11;
+    QPushButton *pushButton;
     QMenuBar *menubar;
     QMenu *menuvdv;
     QStatusBar *statusbar;
@@ -122,6 +124,9 @@ public:
         radioButton_11 = new QRadioButton(centralwidget);
         radioButton_11->setObjectName("radioButton_11");
         radioButton_11->setGeometry(QRect(301, 65, 43, 22));
+        pushButton = new QPushButton(centralwidget);
+        pushButton->setObjectName("pushButton");
+        pushButton->setGeometry(QRect(480, 140, 80, 24));
         MainWindow->setCentralWidget(centralwidget);
         textBrowser_2->raise();
         treeWidget->raise();
@@ -136,6 +141,7 @@ public:
         label_4->raise();
         textBrowser_3->raise();
         lineEdit->raise();
+        pushButton->raise();
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
         menubar->setGeometry(QRect(0, 0, 800, 21));
@@ -224,6 +230,7 @@ public:
         radioButton_10->setText(QCoreApplication::translate("MainWindow", "384", nullptr));
         radioButton_9->setText(QCoreApplication::translate("MainWindow", "256", nullptr));
         radioButton_11->setText(QCoreApplication::translate("MainWindow", "104", nullptr));
+        pushButton->setText(QCoreApplication::translate("MainWindow", "PushButton", nullptr));
         menuvdv->setTitle(QCoreApplication::translate("MainWindow", "\320\236 \320\277\321\200\320\270\320\273\320\276\320\266\320\265\320\275\320\270\320\270", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi

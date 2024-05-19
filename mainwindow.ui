@@ -281,6 +281,19 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <string>104</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>140</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
    <zorder>textBrowser_2</zorder>
    <zorder>treeWidget</zorder>
    <zorder>textBrowser</zorder>
@@ -294,6 +307,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <zorder>label_4</zorder>
    <zorder>textBrowser_3</zorder>
    <zorder>lineEdit</zorder>
+   <zorder>pushButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
