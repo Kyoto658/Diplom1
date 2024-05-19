@@ -497,7 +497,7 @@ QString Sign (octet sig[], const bign_params* paramets)
     size_t count1 = 32;
     count = &count1;
     qDebug()<<"der="<< QByteArray::fromRawData((const char *)der, 32).toHex();;
-    const char* oid = "1 2 112 0 2 0 34 101 31 81";
+    const char* oid = "1.2.112.0.2.0.34.101.31.81";
 
     err_t v = bignOidToDER (der, count, oid);
     if (v==ERR_OK)
